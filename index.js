@@ -1,6 +1,6 @@
 const fs = require("fs");
 const core = require("@elrondnetwork/elrond-core-js");
-const {Address, Mnemonic} = require("@elrondnetwork/erdjs/out");
+const { Address, Mnemonic } = require("@elrondnetwork/erdjs/out");
 const axios = require('axios');
 
 const getAddressShard = async (erdAddress) => {
@@ -9,41 +9,43 @@ const getAddressShard = async (erdAddress) => {
     return res.data["shard"];
 }
 
-const run = async () => {
-    while (true) {
-        let account = new core.account();
-        let mnemonic = account.generateMnemonic();
-        let password = "YOUR_PASSWORD";
-        const desiredShard = 0;
-        let accountIndex = 0;
+const run = async (nbWallets) => {
+    for (let i = 0; i < nbWallets; i++) {
+        while (true) {
+            let account = new core.account();
+            let mnemonic = account.generateMnemonic();
+            let password = "YOUR_PASSWORD";
+            const desiredShard = 0;
+            let accountIndex = 0;
 
-        let privateKeyHex = account.privateKeyFromMnemonic(mnemonic, false, accountIndex.toString(), "");
-        let privateKey = Buffer.from(privateKeyHex, "hex");
-        let keyFileObject = account.generateKeyFileFromPrivateKey(privateKey, password);
-        let keyFileJson = JSON.stringify(keyFileObject, null, 4);
+            let privateKeyHex = account.privateKeyFromMnemonic(mnemonic, false, accountIndex.toString(), "");
+            let privateKey = Buffer.from(privateKeyHex, "hex");
+            let keyFileObject = account.generateKeyFileFromPrivateKey(privateKey, password);
+            let keyFileJson = JSON.stringify(keyFileObject, null, 4);
 
-        const erdAddress = new Address(Buffer.from(account.publicKey)).bech32();
-        const shard = await getAddressShard(erdAddress);
+            const erdAddress = new Address(Buffer.from(account.publicKey)).bech32();
+            const shard = await getAddressShard(erdAddress);
 
-        if (desiredShard === shard) {
-            fs.writeFileSync(`output/${erdAddress}.json`, keyFileJson);
-            fs.writeFileSync(`output/${erdAddress}.txt`, mnemonic);
-            fs.writeFileSync(`output/pwd-${erdAddress}.txt`, password);
-            fs.writeFileSync(`output/${erdAddress}.pem`, getPemContent(mnemonic));
-            const acc = {
-                publicAddress: erdAddress,
-                shard: shard,
-                password: password,
-                mnemonic: mnemonic
-            };
+            if (desiredShard === shard) {
+                fs.mkdirSync(`output/${erdAddress}`);
+                fs.writeFileSync(`output/${erdAddress}/${erdAddress}.json`, keyFileJson);
+                fs.writeFileSync(`output/${erdAddress}/seed.txt`, mnemonic);
+                fs.writeFileSync(`output/${erdAddress}/password.txt`, password);
+                fs.writeFileSync(`output/${erdAddress}/wallet.pem`, getPemContent(mnemonic));
+                const acc = {
+                    publicAddress: erdAddress,
+                    shard: shard,
+                    password: password,
+                    mnemonic: mnemonic
+                };
 
-            console.log(acc);
+                console.log(acc);
 
-            break;
+                break;
+            }
+
         }
-
     }
-
 };
 
 const getPemContent = (seed) => {
@@ -70,5 +72,5 @@ const getPemContent = (seed) => {
 
 };
 
-run()
-
+const nbWallets = 1;
+run(nbWallets)
