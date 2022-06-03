@@ -1,0 +1,26 @@
+{
+  "name": "wallet-creator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julianeapes/wallet-creator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/julianeapes/wallet-creator/issues"
+  },
+  "homepage": "https://github.com/julianeapes/wallet-creator#readme",
+  "dependencies": {
+    "@elrondnetwork/elrond-core-js": "^2.1.0",
+    "@elrondnetwork/erdjs": "^9.0.0",
+    "@elrondnetwork/erdwalletjs-cli": "^2.0.0",
+    "axios": "^0.27.2"
+  }
+}

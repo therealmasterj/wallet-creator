@@ -1,1 +1,1 @@
-# wallet-creator
+# Wallet Creator
